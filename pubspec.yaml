@@ -1,0 +1,19 @@
+name: corsac
+version: 0.1.0-dev
+description: Corsac command line tool
+homepage: https://github.com/corsac-dart/corsac
+author: Anatoly Pulyaevskiy
+
+executables:
+  corsac:
+
+environment:
+  sdk: '>=1.9.0 <2.0.0'
+
+dependencies:
+  resource: "^1.1.0"
+  corsac_console:
+    git: https://github.com/corsac-dart/console.git
+
+dev_dependencies:
+  test: "^0.12.6+1"
