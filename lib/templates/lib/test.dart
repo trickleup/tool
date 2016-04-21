@@ -22,11 +22,11 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:__projectName__/__projectName__.dart';
-import 'package:corsac_base/test.dart' as base;
+import 'package:corsac_bootstrap/test.dart' as base;
 import 'package:corsac_kernel/corsac_kernel.dart';
 
 export 'package:__projectName__/__projectName__.dart';
-export 'package:corsac_base/test.dart';
+export 'package:corsac_bootstrap/test.dart';
 
 part 'src/test/fixtures.dart';
 

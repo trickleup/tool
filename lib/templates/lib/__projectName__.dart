@@ -1,6 +1,6 @@
 library __projectName__;
 
-import 'package:corsac_base/corsac_base.dart' as base;
+import 'package:corsac_bootstrap/corsac_bootstrap.dart' as base;
 import 'package:corsac_console/corsac_console.dart';
 import 'dart:async';
 
