@@ -1,7 +1,7 @@
 #!/usr/bin/env dart
-library corsac.cli;
+library corsac_tool.cli;
 
-import 'package:corsac/corsac.dart';
+import 'package:corsac_tool/corsac_tool.dart';
 import 'dart:async';
 import 'dart:io';
 

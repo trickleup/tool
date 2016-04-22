@@ -1,4 +1,5 @@
-library corsac;
+/// Command-line tool for Corsac projects.
+library corsac_tool;
 
 import 'dart:async';
 import 'dart:io';
@@ -12,21 +13,13 @@ part 'src/commands.dart';
 class CorsacTool extends Console {
   /// Internal constructor.
   CorsacTool._(Kernel kernel, String name, String description)
-      : super(kernel, name, description);
+      : super(kernel, name, description) {
+    commandRunner.addCommand(kernel.get(InitCommand));
+  }
 
   /// Creates an instance of `CorsacConsole`.
   static Future<CorsacTool> build() async {
-    var kernel =
-        await Kernel.build('local', {}, [new CorsacConsoleKernelModule()]);
+    var kernel = await Kernel.build('local', {}, []);
     return new CorsacTool._(kernel, 'corsac', 'Corsac command line tool.');
-  }
-}
-
-class CorsacConsoleKernelModule extends KernelModule {
-  @override
-  Map getServiceConfiguration(String environment) {
-    return {
-      "console.commands": DI.add([DI.get(InitCommand)]),
-    };
   }
 }

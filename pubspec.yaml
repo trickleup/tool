@@ -1,7 +1,7 @@
-name: corsac
+name: corsac_tool
 version: 0.1.0-dev
 description: Corsac command line tool
-homepage: https://github.com/corsac-dart/corsac
+homepage: https://github.com/corsac-dart/tool
 author: Anatoly Pulyaevskiy
 
 executables:

@@ -1,4 +1,4 @@
-part of corsac;
+part of corsac_tool;
 
 class InitCommand extends Command {
   @override
