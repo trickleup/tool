@@ -48,7 +48,7 @@ class InitCommand extends Command {
     }
 
     for (var templateName in _templates) {
-      var res = new r.Resource('package:corsac/templates/${templateName}');
+      var res = new r.Resource('package:corsac_tool/templates/${templateName}');
       var content = await res.readAsString();
       var filename = templateName
           .replaceAll('__projectName__', projectName)
