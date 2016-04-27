@@ -34,6 +34,7 @@ final Bootstrap bootstrap = new TestBootstrap();
 
 class TestBootstrap extends Bootstrap {
   TestBootstrap() : super() {
+    logLevel = Level.OFF;
     modules.add(new TestKernelModule());
     modules.add(new FixturesKernelModule(fixtures));
   }
