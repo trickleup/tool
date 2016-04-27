@@ -95,8 +95,10 @@ class TestCommand extends Command {
     if (argResults['integration'] == true) {
       env['CORSAC_ENV'] = 'integration';
     }
+    print('Running: pub ' + pubRunArgs.join(' '));
     return Process.start('pub', pubRunArgs, environment: env).then((process) {
-      process.stdout.pipe(stdout);
+      stdout.addStream(process.stdout);
+      stderr.addStream(process.stderr);
       return process.exitCode;
     }).then((code) {
       exitCode = code;
