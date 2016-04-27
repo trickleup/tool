@@ -1,44 +1,20 @@
 library __projectName__;
 
-import 'package:corsac_bootstrap/corsac_bootstrap.dart' as base;
-import 'package:corsac_console/corsac_console.dart';
-import 'dart:async';
+import 'package:corsac_bootstrap/corsac_bootstrap.dart';
+import 'package:__projectName__/infrastructure.dart';
 
-export 'domain.dart';
+export 'package:__projectName__/domain.dart';
+export 'package:__projectName__/infrastructure.dart';
 
-class Bootstrap extends base.Bootstrap {
-  /// Name of environment variable defining project environment.
-  final String environmentVarname = '__PROJECT_NAME___ENV';
-
-  /// Filename of parameters file of this project.
-  final String parametersFilename = '__projectName__.yaml';
-
+/// Bootstrap class for __projectName__.
+///
+/// This takes care of project's assempbly process.
+class Bootstrap extends CorsacBootstrap {
   Bootstrap() {
-    // Register your modules here.
-    // infrastructureModules.add(new MyModule());
-  }
+    projectName = '__projectName__';
+    logLevel = Level.INFO;
 
-  /// Creates console application for this project.
-  ///
-  /// To register custom commands with this app:
-  /// * define a kernel module.
-  /// * in `getServiceConfiguration` hook use `DI.add()` to add your command.
-  ///   to container's `console.commands` entry.
-  /// * add your module in `applicationModules` named argument of `buildKernel`
-  ///   call.
-  ///
-  /// Example:
-  ///
-  ///     class MyCustomModule extends KernelModule {
-  ///       @override
-  ///       Map getServiceConfiguration(String environment) {
-  ///         return {
-  ///           'console.commands': DI.add([DI.get(YourCustomCommand)]),
-  ///         };
-  ///       }
-  ///     }
-  Future<Console> createConsole() async {
-    var kernel = await buildKernel(applicationModules: []);
-    return new Console(kernel, 'console', 'CLI console for __projectName__.');
+    // Register your modules here:
+    modules.add(new InfrastructureKernelModule());
   }
 }

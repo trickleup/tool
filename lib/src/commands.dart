@@ -7,24 +7,19 @@ class InitCommand extends Command {
   @override
   final String name = 'init';
 
-  InitCommand() {}
+  InitCommand() : super() {}
 
   List<String> _templates = [
     'pubspec.yaml',
-    '__projectName__.yaml',
     'dotenv',
     '.gitignore',
     'bin/console.dart',
     'lib/__projectName__.dart',
     'lib/domain.dart',
     'lib/infrastructure.dart',
-    'lib/test.dart',
+    'lib/testing.dart',
     'lib/src/domain/blog.dart',
-    'lib/src/test/fixtures.dart',
-    'test/config/test/dotenv',
-    'test/config/test/__projectName__.yaml',
-    'test/config/integration/dotenv',
-    'test/config/integration/__projectName__.yaml',
+    'lib/src/testing/fixtures.dart',
     'test/domain/blog_test.dart',
   ];
 
@@ -54,9 +49,7 @@ class InitCommand extends Command {
           .replaceAll('__projectName__', projectName)
           .replaceAll('dotenv', '.env');
       ensureDirectoryExists(filename);
-      content = content
-          .replaceAll('__projectName__', projectName)
-          .replaceAll('__PROJECT_NAME__', projectName.toUpperCase());
+      content = content.replaceAll('__projectName__', projectName);
       var fileSegments = Directory.current.uri.pathSegments.toList();
       fileSegments.addAll(filename.split('/'));
 
@@ -77,5 +70,30 @@ class InitCommand extends Command {
     var dir = new Directory(
         Directory.current.uri.replace(pathSegments: currentSegments).path);
     dir.createSync(recursive: true);
+  }
+}
+
+class TestCommand extends Command {
+  @override
+  final String description = "Run tests.";
+
+  @override
+  final String name = 'test';
+
+  TestCommand() : super() {
+    argParser.addFlag('integration',
+        abbr: 'i',
+        help: 'Run tests in integration environment',
+        negatable: false);
+  }
+
+  @override
+  Future run() async {
+    return Process.start('pub', ['run', 'test']).then((process) {
+      process.stdout.pipe(stdout);
+      return process.exitCode;
+    }).then((code) {
+      exitCode = code;
+    });
   }
 }

@@ -1,3 +1,4 @@
+/// Library containing domain layer of __projectName__.
 library __projectName__.domain;
 
 export 'package:corsac_dal/corsac_dal.dart';

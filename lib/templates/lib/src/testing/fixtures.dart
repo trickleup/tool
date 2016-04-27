@@ -1,4 +1,4 @@
-part of __projectName__.test;
+part of __projectName__.testing;
 
 Iterable<Object> get fixtures => [
       new Post(1, 'Hello world', 'Just hi.', new DateTime.now()),

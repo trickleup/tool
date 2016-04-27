@@ -1,6 +1,6 @@
 part of __projectName__.domain;
 
-/// Entity representing blog post.
+/// Entity representing blog post (auto-generated).
 class Post {
   /// The ID of this post.
   final int id;

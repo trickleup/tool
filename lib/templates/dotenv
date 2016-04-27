@@ -1,9 +1,9 @@
 # Project's environment variables
 #
 # This file is only used when you develop and run applications on your
-# local machine (therefore __PROJECT_NAME___ENV below is set to "local").
+# local machine (therefore CORSAC_ENV below is set to "local").
 #
 # Important! Do not deploy this file to production or any other environment
 # you have in your delivery pipeline (build, qa, staging, etc).
 
-__PROJECT_NAME___ENV=local
+CORSAC_ENV=local

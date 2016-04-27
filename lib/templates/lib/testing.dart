@@ -16,71 +16,44 @@
 ///
 /// When you run tests with `pub run test` they execute in the "test" environment
 /// by default.
-library __projectName__.test;
+library __projectName__.testing;
 
 import 'dart:async';
-import 'dart:io';
 
 import 'package:__projectName__/__projectName__.dart';
-import 'package:corsac_bootstrap/test.dart' as base;
+import 'package:corsac_dal/di.dart';
 import 'package:corsac_kernel/corsac_kernel.dart';
 
 export 'package:__projectName__/__projectName__.dart';
-export 'package:corsac_bootstrap/test.dart';
+export 'package:corsac_bootstrap/testing.dart';
 
-part 'src/test/fixtures.dart';
+part 'src/testing/fixtures.dart';
 
 /// Project's bootstrap instance for testing.
 final Bootstrap bootstrap = new TestBootstrap();
 
 class TestBootstrap extends Bootstrap {
-  final List<KernelModule> testModules = [
-    new base.TestKernelModule(),
-    new FixturesKernelModule(fixtures)
-  ];
-
-  final List<KernelModule> integrationModules = [];
-
-  @override
-  Future<Kernel> buildKernel(
-      {List<KernelModule> applicationModules: const [], String projectRoot}) {
-    projectRoot = findProjectRoot(null);
-    infrastructureModules.addAll(testModules);
-    infrastructureModules.addAll(integrationModules);
-    return super.buildKernel(
-        applicationModules: applicationModules, projectRoot: projectRoot);
-  }
-
-  @override
-  String findProjectRoot(String scriptPath) {
-    var src = Uri.decodeFull(Platform.script.path);
-    var regex =
-        new RegExp('import \"file:\/\/([^\"]+)\" as test', multiLine: true);
-    var rootSegments;
-    Uri scriptUri;
-    if (regex.hasMatch(src)) {
-      // We are running via test package's dedicated binary.
-      scriptUri = new Uri.file(regex.allMatches(src).first.group(1));
-      rootSegments =
-          scriptUri.pathSegments.takeWhile((seg) => seg != 'test').toList();
-    } else {
-      // We are running via normal command line execution bypassing test package.
-      scriptUri = new Uri.file(Platform.script.path);
-      rootSegments =
-          scriptUri.pathSegments.takeWhile((seg) => seg != 'test').toList();
-    }
-
-    if (Platform.environment.containsKey('PROJECT_INTEGRATION_TESTS')) {
-      rootSegments.addAll(['test', 'config', 'integration']);
-    } else {
-      rootSegments.addAll(['test', 'config', 'test']);
-    }
-
-    return scriptUri.replace(pathSegments: rootSegments).path +
-        Platform.pathSeparator;
+  TestBootstrap() : super() {
+    modules.add(new TestKernelModule());
+    modules.add(new FixturesKernelModule(fixtures));
   }
 }
 
+/// Kernel module for test environment.
+/// Adds container middleware which replaces all repositories with
+/// in-memory implementations.
+class TestKernelModule extends KernelModule {
+  @override
+  Future initialize(Kernel kernel) {
+    if (kernel.environment == 'test') {
+      // Register in-memory implementations for repository layer.
+      kernel.container.addMiddleware(new InMemoryRepositoryDIMiddleware());
+    }
+    return new Future.value();
+  }
+}
+
+/// Kernel module which loads fixtures to be used in tests.
 class FixturesKernelModule extends KernelModule {
   final Iterable<Object> fixtures;
 

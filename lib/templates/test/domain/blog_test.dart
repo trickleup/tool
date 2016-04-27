@@ -1,6 +1,6 @@
 library __projectName__.tests.domain.blog;
 
-import 'package:__projectName__/test.dart';
+import 'package:__projectName__/testing.dart';
 
 main() {
   group('Post:', () {
