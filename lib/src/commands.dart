@@ -89,7 +89,13 @@ class TestCommand extends Command {
 
   @override
   Future run() async {
-    return Process.start('pub', ['run', 'test']).then((process) {
+    var pubRunArgs = ['run', 'test'];
+    pubRunArgs.addAll(argResults.rest);
+    var env = {};
+    if (argResults['integration'] == true) {
+      env['CORSAC_ENV'] = 'integration';
+    }
+    return Process.start('pub', pubRunArgs, environment: env).then((process) {
       process.stdout.pipe(stdout);
       return process.exitCode;
     }).then((code) {
