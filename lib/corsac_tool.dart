@@ -16,6 +16,7 @@ class CorsacTool extends Console {
       : super(kernel, name, description) {
     commandRunner.addCommand(kernel.get(InitCommand));
     commandRunner.addCommand(kernel.get(TestCommand));
+    commandRunner.addCommand(kernel.get(BuildCommand));
   }
 
   /// Creates an instance of `CorsacConsole`.

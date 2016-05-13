@@ -105,3 +105,115 @@ class TestCommand extends Command {
     });
   }
 }
+
+/// Builds project artifact for distribution.
+///
+/// This copies all project sources and dependencies to `destination` folder and
+/// makes sure `.packages` has proper paths to all deps.
+class BuildCommand extends Command {
+  @override
+  final String description = "Build project artifact.";
+
+  @override
+  final String name = 'build';
+
+  BuildCommand() : super() {
+    argParser.addOption('destination',
+        abbr: 'd',
+        help: 'Destination folder for the artifact (relative to project root)',
+        defaultsTo: ['artifact', 'dist'].join(Platform.pathSeparator));
+  }
+
+  @override
+  Future run() async {
+    var destination =
+        _path([Directory.current.path, argResults['destination']]);
+    print('Destination folder is `${destination}`');
+    var destinationDir = new Directory(destination);
+    if (destinationDir.existsSync()) {
+      destinationDir.deleteSync(recursive: true);
+    }
+    destinationDir.createSync(recursive: true);
+
+    // Copy everything from lib (excluding testing)
+    print('Copying project sources (lib/ folder)...');
+    var libDir = [Directory.current.path, 'lib'].join(Platform.pathSeparator);
+    var destLibDir = [destination, 'lib'].join(Platform.pathSeparator);
+    _runProcess('cp', ['-r', libDir, destLibDir]);
+    var testingLibFile = new File(_path([destLibDir, 'testing.dart']));
+    if (testingLibFile.existsSync()) {
+      testingLibFile.deleteSync();
+    }
+    var testingLibDir = new Directory(_path([destLibDir, 'src', 'testing']));
+    if (testingLibDir.existsSync()) {
+      testingLibDir.deleteSync(recursive: true);
+    }
+
+    // Copy all binaries
+    print('Copying project binaries (bin/ folder)...');
+    var binDir = _path([Directory.current.path, 'bin']);
+    var destBinDir = _path([destination, 'bin']);
+    if (!new Directory(destBinDir).existsSync()) {
+      new Directory(destBinDir).createSync(recursive: true);
+    }
+
+    for (var entry in new Directory(binDir).listSync()) {
+      if (entry.statSync().type == FileSystemEntityType.FILE) {
+        _runProcess('cp', [entry.path, destBinDir + Platform.pathSeparator]);
+      }
+    }
+
+    // Copy package spec file and adjust paths to be relative.
+    print('Copying dependencies (packages)...');
+    var packages = loadPackageSpec();
+    var lines = [];
+    for (var packageName in packages.keys) {
+      var destPackageDir = _path([destination, 'packages', packageName]);
+      var sourcePath = packages[packageName].path;
+      Uri newPath = new Uri.file(_path(['..', 'lib']));
+      if (sourcePath != 'lib/') {
+        new Directory(destPackageDir).createSync(recursive: true);
+        _runProcess('cp', ['-r', sourcePath, destPackageDir]);
+        newPath = new Uri.file(_path(['..', 'packages', packageName]));
+      }
+      packages[packageName] = newPath;
+      lines.add('${packageName}:${newPath.toFilePath()}');
+    }
+
+    print('Writing adjusted `bin/.packages`...');
+    var newPackageSpec = new File(_path([destBinDir, '.packages']));
+    var sink = newPackageSpec.openWrite();
+    sink.writeAll(lines, '\n');
+    await sink.flush();
+    await sink.close();
+
+    print('Done.');
+  }
+}
+
+Map<String, Uri> loadPackageSpec() {
+  var file = new File(_path([Directory.current.path, '.packages']));
+  List<String> lines =
+      file.readAsStringSync().split('\n').where((_) => !_.startsWith('#'));
+  var result = {};
+  for (var line in lines) {
+    if (line.trim().isEmpty) continue;
+    var pos = line.indexOf(':');
+    var packageName = line.substring(0, pos);
+    result[packageName] = Uri.parse(line.substring(pos + 1));
+  }
+
+  return result;
+}
+
+String _path(Iterable<String> segments) =>
+    segments.join(Platform.pathSeparator);
+
+void _runProcess(String executable, Iterable<String> arguments) {
+  var result = Process.runSync(executable, arguments);
+  if (result.exitCode != 0) {
+    stdout.write(result.stdout);
+    stderr.write(result.stderr);
+    exit(result.exitCode);
+  }
+}
