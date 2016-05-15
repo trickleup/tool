@@ -138,7 +138,7 @@ class BuildCommand extends Command {
     // Copy everything from lib (excluding testing)
     print('Copying project sources (lib/ folder)...');
     var libDir = [Directory.current.path, 'lib'].join(Platform.pathSeparator);
-    var destLibDir = [destination].join(Platform.pathSeparator);
+    var destLibDir = [destination, 'lib'].join(Platform.pathSeparator);
     _runProcess('cp', ['-r', libDir, destLibDir]);
     var testingLibFile = new File(_path([destLibDir, 'testing.dart']));
     if (testingLibFile.existsSync()) {
@@ -210,6 +210,7 @@ String _path(Iterable<String> segments) =>
     segments.join(Platform.pathSeparator);
 
 void _runProcess(String executable, Iterable<String> arguments) {
+  print(arguments);
   var result = Process.runSync(executable, arguments);
   if (result.exitCode != 0) {
     stdout.write(result.stdout);
