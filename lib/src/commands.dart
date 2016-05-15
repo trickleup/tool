@@ -170,6 +170,9 @@ class BuildCommand extends Command {
     for (var packageName in packages.keys) {
       var destPackageDir = _path([destination, 'packages', packageName]);
       var sourcePath = packages[packageName].path;
+      if (Platform.isLinux) {
+        sourcePath = "$sourcePath*";
+      }
       Uri newPath = new Uri.file(_path(['..', 'lib']));
       if (sourcePath != 'lib/') {
         new Directory(destPackageDir).createSync(recursive: true);
@@ -210,7 +213,6 @@ String _path(Iterable<String> segments) =>
     segments.join(Platform.pathSeparator);
 
 void _runProcess(String executable, Iterable<String> arguments) {
-  print(arguments);
   var result = Process.runSync(executable, arguments);
   if (result.exitCode != 0) {
     stdout.write(result.stdout);
