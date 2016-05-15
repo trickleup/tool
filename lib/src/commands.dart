@@ -138,7 +138,7 @@ class BuildCommand extends Command {
     // Copy everything from lib (excluding testing)
     print('Copying project sources (lib/ folder)...');
     var libDir = [Directory.current.path, 'lib'].join(Platform.pathSeparator);
-    var destLibDir = [destination, 'lib'].join(Platform.pathSeparator);
+    var destLibDir = [destination].join(Platform.pathSeparator);
     _runProcess('cp', ['-r', libDir, destLibDir]);
     var testingLibFile = new File(_path([destLibDir, 'testing.dart']));
     if (testingLibFile.existsSync()) {
