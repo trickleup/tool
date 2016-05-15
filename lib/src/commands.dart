@@ -214,7 +214,6 @@ String _path(Iterable<String> segments) =>
 
 void _runProcess(String executable, Iterable<String> arguments) {
   var result = Process.runSync(executable, arguments);
-  print(arguments);
   if (result.exitCode != 0) {
     stdout.write(result.stdout);
     stderr.write(result.stderr);
