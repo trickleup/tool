@@ -171,7 +171,7 @@ class BuildCommand extends Command {
       var destPackageDir = _path([destination, 'packages', packageName]);
       var sourcePath = packages[packageName].path;
       if (Platform.isLinux) {
-        sourcePath = "$sourcePath*";
+        sourcePath = "$sourcePath.";
       }
       Uri newPath = new Uri.file(_path(['..', 'lib']));
       if (sourcePath != 'lib/') {
