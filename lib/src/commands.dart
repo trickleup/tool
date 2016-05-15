@@ -169,10 +169,7 @@ class BuildCommand extends Command {
     var lines = [];
     for (var packageName in packages.keys) {
       var destPackageDir = _path([destination, 'packages', packageName]);
-      var sourcePath = packages[packageName].path;
-      if (Platform.isLinux) {
-        sourcePath = "$sourcePath.";
-      }
+      var sourcePath = "${packages[packageName].path}.";
       Uri newPath = new Uri.file(_path(['..', 'lib']));
       if (sourcePath != 'lib/') {
         new Directory(destPackageDir).createSync(recursive: true);
